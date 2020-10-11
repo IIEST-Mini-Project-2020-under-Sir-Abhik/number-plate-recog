@@ -33,15 +33,20 @@ for contour in contours:
             contour_with_license_plate = approx
             x, y, w, h = cv2.boundingRect(contour)
             if w/h < 1: continue #as the aspect ratio of the number plate will be wider
-            license_plate = gray_image[y:y + h, x:x + w]
+            license_plate = gray_image[y + 2:y + h - 2, x + 2:x + w - 2]
             break
 
 # Noise removal
 license_plate = cv2.bilateralFilter(license_plate, 11, 17, 17)
-(thresh, license_plate) = cv2.threshold(license_plate, 150, 180, cv2.THRESH_BINARY)
+(thresh, license_plate) = cv2.threshold(license_plate, 120, 180, cv2.THRESH_BINARY)
 
 shape = license_plate.shape #dimensions of the license plate
 
 # Display
 cv2.imshow("License Plate Detection", cv2.resize(license_plate, (100*shape[1]//shape[0], 100)))
 cv2.waitKey(0)
+
+shape = (50*shape[1]//shape[0], 50)
+license_plate = cv2.resize(license_plate, shape)
+shape = shape[::-1] #swapping
+# print("shapes equal? ", shape == license_plate.shape, shape)
